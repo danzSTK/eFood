@@ -1,39 +1,35 @@
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import Header from '../../Components/Header'
-
-import banner from '../../assets/images/banner.png'
-import { Banner, Content, ProfileTitle, TagTitle } from './styles'
 import ProductList from '../../Components/Product-List'
 
-type Lojas = {
-  title: string
-  type: string
-  id: number
-}
-
-const lojas: Lojas[] = [
-  { title: 'Hioki Sushi', type: 'Japonesa', id: 1 },
-  { title: 'La Dolce Vita Trattoria', type: 'Italiana', id: 2 }
-]
+import { Banner, Content, ProfileTitle, TagTitle } from './styles'
+import { Restaurante } from '../Home'
 
 const LojaProfile = () => {
   const { id } = useParams()
-  const loja = lojas.find((loja) => loja.id === Number(id))
+  const [restaurante, setResturante] = useState<Restaurante>()
 
-  console.log(loja)
+  useEffect(() => {
+    fetch(`https://fake-api-tau.vercel.app/api/efood/restaurantes/${id}`)
+      .then((res) => res.json())
+      .then((res) => setResturante(res))
+  }, [id])
+
+  if (!restaurante) return <h2>Carregando...</h2>
 
   return (
     <>
       <Header tipo="profile" />
       <Content>
-        <Banner style={{ backgroundImage: `url(${banner})` }} />
+        <Banner style={{ backgroundImage: `url(${restaurante.capa})` }} />
         <div className="container">
-          <TagTitle>{loja?.type}</TagTitle>
-          <ProfileTitle>{loja?.title}</ProfileTitle>
+          <TagTitle>{restaurante.tipo}</TagTitle>
+          <ProfileTitle>{restaurante.titulo}</ProfileTitle>
         </div>
       </Content>
-      {/* <ProductList tipo="profile" /> */}
+      <ProductList tipo="profile" cardapios={restaurante.cardapio} />
     </>
   )
 }

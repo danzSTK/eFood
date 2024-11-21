@@ -29,6 +29,7 @@ const Home = () => {
     fetch('https://fake-api-tau.vercel.app/api/efood/restaurantes')
       .then((res) => res.json())
       .then((res) => setRestaurantes(res))
+      .catch((e) => console.log(e))
   }, [])
 
   if (!restaurantes) return <h2>Carregando...</h2>

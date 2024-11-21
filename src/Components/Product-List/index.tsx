@@ -1,16 +1,18 @@
 import { Props as styleProps } from '../Card/styles' // Será o tipo de designer do card
-import { Restaurante } from '../../pages/Home' // recebendo a resposta da api atravez de props
+import { Cardapio, Restaurante } from '../../pages/Home' // recebendo a resposta da api atravez de props
 
 import { Products } from './styles'
 import Product from '../Card'
 
 interface Props extends styleProps {
-  restaurantes: Restaurante[]
+  restaurantes?: Restaurante[]
+  cardapios?: Cardapio[]
 }
 
-const ProductList = ({ tipo, restaurantes }: Props) => {
+const ProductList = ({ tipo, restaurantes, cardapios }: Props) => {
   function ProductsContent() {
     if (tipo === 'home') {
+      if (!restaurantes) return <h2>Carregando...</h2>
       return (
         <Products tipo="home">
           {restaurantes.map((restaurante) => (
@@ -31,57 +33,20 @@ const ProductList = ({ tipo, restaurantes }: Props) => {
     }
 
     if (tipo === 'profile') {
+      if (!cardapios) return <h2>Carregando...</h2>
       return (
         <Products tipo="profile">
-          {/*
-          <Product
-            image={pizzaImage}
-            description="A clássica Marguerita: molho de tomate suculento, mussarela derretida, manjericão fresco e um toque de azeite. Sabor e simplicidade!"
-            infos={['']}
-            title="Pizza Marguerita"
-            id={1}
-            tipo="profile"
-          />
-          <Product
-            image={pizzaImage}
-            description="A clássica Marguerita: molho de tomate suculento, mussarela derretida, manjericão fresco e um toque de azeite. Sabor e simplicidade!"
-            infos={['']}
-            title="Pizza Marguerita"
-            id={1}
-            tipo="profile"
-          />
-          <Product
-            image={pizzaImage}
-            description="A clássica Marguerita: molho de tomate suculento, mussarela derretida, manjericão fresco e um toque de azeite. Sabor e simplicidade!"
-            infos={['']}
-            title="Pizza Marguerita"
-            id={1}
-            tipo="profile"
-          />
-          <Product
-            image={pizzaImage}
-            description="A clássica Marguerita: molho de tomate suculento, mussarela derretida, manjericão fresco e um toque de azeite. Sabor e simplicidade!"
-            infos={['']}
-            title="Pizza Marguerita"
-            id={1}
-            tipo="profile"
-          />
-          <Product
-            image={pizzaImage}
-            description="A clássica Marguerita: molho de tomate suculento, mussarela derretida, manjericão fresco e um toque de azeite. Sabor e simplicidade!"
-            infos={['']}
-            title="Pizza Marguerita"
-            id={1}
-            tipo="profile"
-          />
-          <Product
-            image={pizzaImage}
-            description="A clássica Marguerita: molho de tomate suculento, mussarela derretida, manjericão fresco e um toque de azeite. Sabor e simplicidade!"
-            infos={['']}
-            title="Pizza Marguerita"
-            id={1}
-            tipo="profile"
-          /> */}
+          {cardapios.map((cardapio) => (
+            <Product
+              id={cardapio.id}
+              title={cardapio.nome}
+              image={cardapio.foto}
+              description={cardapio.descricao}
+              infos={[]}
+              tipo="profile"
+              key={cardapio.id}
+            />
+          ))}
         </Products>
       )
     }

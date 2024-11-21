@@ -11,7 +11,7 @@ export const Card = styled.div<Props>`
   display: block;
   max-width: ${({ tipo }) => (tipo === 'home' ? '472px' : '320px')};
   width: 100%;
-  max-height: ${({ tipo }) => (tipo === 'home' ? '400px' : '340px')};
+  max-height: ${({ tipo }) => (tipo === 'home' ? '400px' : '350px')};
   height: 100%;
   background-color: ${({ tipo }) =>
     tipo === 'home' ? 'tranparent' : cores.corPrincipal};
@@ -53,12 +53,12 @@ export const Title = styled.h3<Props>`
 export const Description = styled.p<Props>`
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: ${({ tipo }) => (tipo === 'home' ? '4' : '5')};
-  max-height: ${({ tipo }) => (tipo === 'home' ? '88px' : '110px')};
-  font-size: 14px;
-  line-height: 22px;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 14px;
+  line-height: 22px;
+  -webkit-line-clamp: 4;
+  max-height: ${({ tipo }) => (tipo === 'home' ? '88px' : '110px')};
   margin: 8px 0;
 
   color: ${({ tipo }) => (tipo === 'home' ? cores.corPrincipal : cores.branco)};
