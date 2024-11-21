@@ -20,9 +20,10 @@ const ProductList = ({ tipo, restaurantes }: Props) => {
               title={restaurante.titulo}
               description={restaurante.descricao}
               nota={restaurante.avaliacao}
-              infos={[`${restaurante.tipo}`, `${restaurante.destacado}`]}
+              infos={[`${restaurante.tipo}`]}
               tipo="home"
               key={restaurante.id}
+              destacado={restaurante.destacado}
             />
           ))}
         </Products>

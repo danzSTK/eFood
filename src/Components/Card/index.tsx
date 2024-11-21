@@ -22,7 +22,8 @@ const Product = ({
   infos,
   image,
   id,
-  tipo
+  tipo,
+  destacado
 }: Props) => {
   function CardType() {
     if (tipo === 'home') {
@@ -33,6 +34,7 @@ const Product = ({
             {infos.map((info) => (
               <Tag key={info}>{info}</Tag>
             ))}
+            {destacado && <Tag>Destacado</Tag>}
           </Tags>
           <Content tipo={tipo}>
             <Title tipo={tipo}>
