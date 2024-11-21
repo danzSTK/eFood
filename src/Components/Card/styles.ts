@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 import { cores } from '../../styles'
 
-export type Props = {
+export interface Props {
   tipo: 'profile' | 'home'
 }
 
@@ -20,7 +20,9 @@ export const Card = styled.div<Props>`
   img {
     display: block;
     width: 100%;
-    height: ${({ tipo }) => (tipo === 'home' ? '220px' : '170px')}220px;
+    height: ${({ tipo }) => (tipo === 'home' ? '220px' : '170px')};
+    object-fit: cover;
+    object-position: center;
   }
 `
 

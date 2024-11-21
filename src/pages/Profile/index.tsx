@@ -33,7 +33,7 @@ const LojaProfile = () => {
           <ProfileTitle>{loja?.title}</ProfileTitle>
         </div>
       </Content>
-      <ProductList tipo="profile" />
+      {/* <ProductList tipo="profile" /> */}
     </>
   )
 }

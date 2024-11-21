@@ -11,7 +11,8 @@ type Props = {
   nota?: number
   infos: string[]
   image: string
-  id?: number
+  id: number
+  destacado?: boolean
 }
 
 const Product = ({
