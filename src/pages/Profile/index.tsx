@@ -29,7 +29,9 @@ const LojaProfile = () => {
           <ProfileTitle>{restaurante.titulo}</ProfileTitle>
         </div>
       </Content>
-      <ProductList tipo="profile" cardapios={restaurante.cardapio} />
+      <div className="container">
+        <ProductList tipo="profile" cardapios={restaurante.cardapio} />
+      </div>
     </>
   )
 }
