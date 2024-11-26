@@ -3,6 +3,8 @@ import * as icon from '@fortawesome/free-solid-svg-icons'
 
 import { Button, Card, Content, Description, Tag, Tags, Title } from './styles'
 import { Link } from 'react-router-dom'
+import { useContext } from 'react'
+import { ModalContext } from '../../context/ModalContext'
 
 type Props = {
   tipo: 'home' | 'profile'
@@ -26,6 +28,13 @@ const Product = ({
   destacado
 }: Props) => {
   function CardType() {
+    const context = useContext(ModalContext)
+
+    function openModal(id: number) {
+      context?.toggleModal()
+      context?.setModalID(id)
+    }
+
     if (tipo === 'home') {
       return (
         <Card tipo={tipo}>
@@ -64,7 +73,7 @@ const Product = ({
               <span>{title}</span>
             </Title>
             <Description tipo={tipo}>{description}</Description>
-            <Button tipo={tipo} type="button">
+            <Button tipo={tipo} type="button" onClick={() => openModal(id)}>
               Adicionar ao carrinho
             </Button>
           </Content>

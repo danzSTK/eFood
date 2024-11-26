@@ -1,6 +1,15 @@
 import { createContext, ReactNode, useState } from 'react'
 
-export const ModalContext = createContext({})
+interface ModalContextProps {
+  openModal: boolean
+  toggleModal: () => void
+  modalID: number | null
+  setModalID: (ID: number) => void
+}
+
+export const ModalContext = createContext<ModalContextProps | undefined>(
+  undefined
+)
 
 interface ModalProvideProps {
   children: ReactNode
@@ -8,13 +17,16 @@ interface ModalProvideProps {
 
 export const ModalProvider: React.FC<ModalProvideProps> = ({ children }) => {
   const [openModal, setOpenModal] = useState<boolean>(false)
+  const [modalID, setModalID] = useState<number | null>(null)
 
   const toggleModal = () => {
-    setOpenModal(openModal ? false : true)
+    setOpenModal(!openModal)
   }
 
   return (
-    <ModalContext.Provider value={{ openModal, toggleModal }}>
+    <ModalContext.Provider
+      value={{ openModal, toggleModal, modalID, setModalID }}
+    >
       {children}
     </ModalContext.Provider>
   )
