@@ -21,6 +21,7 @@ export const ModalProvider: React.FC<ModalProvideProps> = ({ children }) => {
 
   const toggleModal = () => {
     setOpenModal(!openModal)
+    document.body.classList.toggle('modal-open')
   }
 
   return (
