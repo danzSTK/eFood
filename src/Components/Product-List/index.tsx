@@ -1,26 +1,40 @@
-import React from 'react'
+// Precisa de um tratamento de erro melhor.
+import { useParams } from 'react-router-dom'
+
+import {
+  useGetRestauranteQuery,
+  useGetRestaurantesQuery
+} from '../../store/reducers/api'
+
 import { Props as styleProps } from '../Card/styles' // Será o tipo de designer do card
-import { Cardapio, Restaurante } from '../../pages/Home' // recebendo a resposta da api atravez de props
 
 import { Products } from './styles'
 import Product from '../Card'
-import { useGetRestaurantesQuery } from '../../store/reducers/api'
 
-interface Props extends styleProps {
-  cardapios?: Cardapio[]
-}
+const ProductList = ({ tipo }: styleProps) => {
+  const { id } = useParams() // Usado somente quando for do tipo profile, preciso saber qual é o restaurante e será assim que irei descobrir
 
-const ProductList = ({ tipo, cardapios }: Props) => {
-  const { data: restaurantes, error, isLoading } = useGetRestaurantesQuery()
+  const {
+    data: Listarestaurantes,
+    error: erroListaRestaurantes,
+    isLoading: carregandoListaRestaurantes
+  } = useGetRestaurantesQuery() // Aqui estou recebendo uma lista de restaurantes/resposta da api
+
+  const {
+    data: restaurante,
+    error: restauranteErro,
+    isLoading: carregandoRestaurante
+  } = useGetRestauranteQuery(String(id)) // aqui será usado, até o momento, somente quando for do tipo profile é assim que irei exibir informações do restaurante
 
   function ProductsContent() {
-    if (isLoading) <h2>Carregando..</h2>
-    if (error) <h2>Desculpe, não foi possível acessar os restaurantes</h2>
+    if (carregandoListaRestaurantes) <h2>Carregando..</h2>
+    if (erroListaRestaurantes)
+      <h2>Desculpe, não foi possível acessar os restaurantes</h2>
 
     if (tipo === 'home') {
       return (
         <Products tipo="home">
-          {restaurantes?.map((restaurante) => (
+          {Listarestaurantes?.map((restaurante) => (
             <Product
               id={restaurante.id}
               image={restaurante.capa}
@@ -38,10 +52,16 @@ const ProductList = ({ tipo, cardapios }: Props) => {
     }
 
     if (tipo === 'profile') {
-      if (!cardapios) return <h2>Carregando...</h2>
+      if (carregandoRestaurante) <h2>Carregando...</h2>
+
+      if (restauranteErro)
+        <h2>Desculpe, não foi possível acessar esse restaurante</h2>
+
+      const cardapios = restaurante?.cardapio
+
       return (
         <Products tipo="profile">
-          {cardapios.map((cardapio) => (
+          {cardapios?.map((cardapio) => (
             <Product
               id={cardapio.id}
               title={cardapio.nome}

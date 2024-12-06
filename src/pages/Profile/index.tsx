@@ -58,7 +58,7 @@ const LojaProfile = () => {
         </div>
       </Content>
       <div className="container">
-        <ProductList tipo="profile" cardapios={restaurante.cardapio} />
+        <ProductList tipo="profile" />
       </div>
       <Modal className={context?.openModal ? 'open' : ''}>
         <ModalContainer className="container">
