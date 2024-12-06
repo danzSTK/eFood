@@ -1,11 +1,12 @@
 import { BrowserRouter } from 'react-router-dom'
+import { Provider } from 'react-redux'
+
+import { store } from './store'
+
+import Rotas from './routes'
 
 import Footer from './Components/Footer'
-import Rotas from './routes'
 import { GlobalCss } from './styles'
-import { ModalProvider } from './context/ModalContext'
-import { Provider } from 'react-redux'
-import { store } from './store'
 
 function App() {
   return (

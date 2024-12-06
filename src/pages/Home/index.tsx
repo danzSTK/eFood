@@ -36,7 +36,7 @@ const Home = () => {
   return (
     <>
       <Header tipo="home" />
-      <ProductList tipo="home" restaurantes={restaurantes} />
+      <ProductList tipo="home" />
     </>
   )
 }

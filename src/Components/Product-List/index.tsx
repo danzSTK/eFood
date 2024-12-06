@@ -7,7 +7,6 @@ import Product from '../Card'
 import { useGetRestaurantesQuery } from '../../store/reducers/api'
 
 interface Props extends styleProps {
-  restaurantes?: Restaurante[]
   cardapios?: Cardapio[]
 }
 
@@ -15,11 +14,13 @@ const ProductList = ({ tipo, cardapios }: Props) => {
   const { data: restaurantes, error, isLoading } = useGetRestaurantesQuery()
 
   function ProductsContent() {
+    if (isLoading) <h2>Carregando..</h2>
+    if (error) <h2>Desculpe, não foi possível acessar os restaurantes</h2>
+
     if (tipo === 'home') {
-      if (!restaurantes) return <h2>Carregando...</h2>
       return (
         <Products tipo="home">
-          {restaurantes.map((restaurante) => (
+          {restaurantes?.map((restaurante) => (
             <Product
               id={restaurante.id}
               image={restaurante.capa}
