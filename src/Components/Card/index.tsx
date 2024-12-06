@@ -1,10 +1,12 @@
+import { useDispatch } from 'react-redux'
+import { Link } from 'react-router-dom'
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as icon from '@fortawesome/free-solid-svg-icons'
 
+import { open } from '../../store/reducers/modal'
+
 import { Button, Card, Content, Description, Tag, Tags, Title } from './styles'
-import { Link } from 'react-router-dom'
-import { useContext } from 'react'
-import { ModalContext } from '../../context/ModalContext'
 
 type Props = {
   tipo: 'home' | 'profile'
@@ -13,7 +15,7 @@ type Props = {
   nota?: number
   infos: string[]
   image: string
-  id: number
+  id: number | string
   destacado?: boolean
 }
 
@@ -28,11 +30,10 @@ const Product = ({
   destacado
 }: Props) => {
   function CardType() {
-    const context = useContext(ModalContext)
+    const dispatch = useDispatch()
 
-    function openModal(id: number) {
-      context?.toggleModal()
-      context?.setModalID(id)
+    const openModal = (id: number | string) => {
+      dispatch(open(id))
     }
 
     if (tipo === 'home') {

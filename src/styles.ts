@@ -28,6 +28,6 @@ export const GlobalCss = createGlobalStyle`
   }
 
   body.modal-open {
-    overflow: hidden;
+    overflow: hidden
   }
 `

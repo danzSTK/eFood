@@ -1,26 +1,21 @@
 import { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
 
 // styles
-import {
-  Banner,
-  ButtonCloseModal,
-  Content,
-  Modal,
-  ModalButton,
-  ModalContainer,
-  ModalContent,
-  ProfileTitle,
-  TagTitle
-} from './styles'
+import * as S from './styles'
 import Header from '../../Components/Header'
 import ProductList from '../../Components/Product-List'
 
 //tipos
 import { Cardapio, Restaurante } from '../Home'
 import { ModalContext } from '../../context/ModalContext'
+import { useGetRestauranteQuery } from '../../store/reducers/api'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootReducer } from '../../store'
+import { close } from '../../store/reducers/modal'
 
 export const formataPreco = (preco = 0) => {
   return new Intl.NumberFormat('pt-BR', {
@@ -30,53 +25,81 @@ export const formataPreco = (preco = 0) => {
 }
 
 const LojaProfile = () => {
+  const dispatch = useDispatch()
   const { id } = useParams()
-  const [restaurante, setResturante] = useState<Restaurante>()
-
-  const context = useContext(ModalContext)
-
-  const produtoDoCardapio: Cardapio | undefined = restaurante?.cardapio.find(
-    (item) => item.id === context?.modalID
+  const { id: ModalID, isOpen } = useSelector(
+    (state: RootReducer) => state.modal
   )
 
-  useEffect(() => {
-    fetch(`https://fake-api-tau.vercel.app/api/efood/restaurantes/${id}`)
-      .then((res) => res.json())
-      .then((res) => setResturante(res))
-  }, [id])
+  const {
+    data: restaurante,
+    error: restauranteErro,
+    isLoading: carregandoRestaurante
+  } = useGetRestauranteQuery(String(id))
 
-  if (!restaurante) return <h2>Carregando...</h2>
+  const produtoDoCardapio = restaurante?.cardapio.find(
+    (item) => item.id === ModalID
+  )
+
+  const closeModal = () => {
+    dispatch(close())
+  }
+
+  if (!restaurante) {
+    return (
+      <>
+        <Header tipo="profile" />
+        <h2>Carregando...</h2>
+      </>
+    )
+  }
+  if (restauranteErro) {
+    return (
+      <>
+        <Header tipo="profile" />
+        <h2>Opps! Não conseguimos informações sobre esse restaurante</h2>
+      </>
+    )
+  }
+  if (carregandoRestaurante) {
+    return (
+      <>
+        <Header tipo="profile" />
+        <h2>Carregando...</h2>
+      </>
+    )
+  }
 
   return (
     <>
       <Header tipo="profile" />
-      <Content>
-        <Banner style={{ backgroundImage: `url(${restaurante.capa})` }} />
+      <S.Content>
+        <S.Banner style={{ backgroundImage: `url(${restaurante.capa})` }} />
         <div className="container">
-          <TagTitle>{restaurante.tipo}</TagTitle>
-          <ProfileTitle>{restaurante.titulo}</ProfileTitle>
+          <S.TagTitle>{restaurante.tipo}</S.TagTitle>
+          <S.ProfileTitle>{restaurante.titulo}</S.ProfileTitle>
         </div>
-      </Content>
+      </S.Content>
       <div className="container">
-        <ProductList tipo="profile" />
+        <ProductList tipo="profile" cardapios={restaurante.cardapio} />
       </div>
-      <Modal className={context?.openModal ? 'open' : ''}>
-        <ModalContainer className="container">
-          <ButtonCloseModal onClick={context?.toggleModal}>
+      <S.Modal className={isOpen ? 'open' : ''}>
+        <S.ModalContainer className="container">
+          <S.ButtonCloseModal onClick={closeModal}>
             <FontAwesomeIcon icon={faXmark} />
-          </ButtonCloseModal>
+          </S.ButtonCloseModal>
           <img src={produtoDoCardapio?.foto} alt="Imagem do item" />
-          <ModalContent>
+          <S.ModalContent>
             <h4>{produtoDoCardapio?.nome}</h4>
             <p>{produtoDoCardapio?.descricao}</p>
             <p>Serve {produtoDoCardapio?.porcao}</p>
-            <ModalButton tipo="profile">
+            <S.ModalButton tipo="profile">
               Adicionar ao carrinho - {formataPreco(produtoDoCardapio?.preco)}{' '}
-            </ModalButton>
-          </ModalContent>
-        </ModalContainer>
-        <div className="overlay" onClick={context?.toggleModal}></div>
-      </Modal>
+            </S.ModalButton>
+          </S.ModalContent>
+        </S.ModalContainer>
+        <div className="overlay" onClick={closeModal}></div>
+      </S.Modal>
     </>
   )
 }

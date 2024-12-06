@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useGetRestaurantesQuery } from '../../store/reducers/api'
+
 import Header from '../../Components/Header'
 import ProductList from '../../Components/Product-List'
 
@@ -23,20 +24,34 @@ export type Restaurante = {
 }
 
 const Home = () => {
-  const [restaurantes, setRestaurantes] = useState<Restaurante[]>()
+  const {
+    data: listaRestaurantes,
+    error: erroListaRestaurantes,
+    isLoading: carregandoListaRestaurantes
+  } = useGetRestaurantesQuery()
 
-  useEffect(() => {
-    fetch('https://fake-api-tau.vercel.app/api/efood/restaurantes')
-      .then((res) => res.json())
-      .then((res) => setRestaurantes(res))
-      .catch((e) => console.log(e))
-  }, [])
+  if (carregandoListaRestaurantes) {
+    return (
+      <>
+        <Header tipo="home" />
+        <h2>Carregando...</h2>
+      </>
+    )
+  }
 
-  if (!restaurantes) return <h2>Carregando...</h2>
+  if (erroListaRestaurantes) {
+    return (
+      <>
+        <Header tipo="home" />
+        <h2>Opps! Parece que nao conseguimos acesso.</h2>
+      </>
+    )
+  }
+
   return (
     <>
       <Header tipo="home" />
-      <ProductList tipo="home" />
+      <ProductList tipo="home" listaRestaurantes={listaRestaurantes} />
     </>
   )
 }
