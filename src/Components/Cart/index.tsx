@@ -1,12 +1,15 @@
+import { useDispatch, useSelector } from 'react-redux'
+
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-import { Button } from '../../styles'
-import { Card, CardButton, Cards, CartContainer, Siderbar } from './styles'
-import { useDispatch, useSelector } from 'react-redux'
 import { RootReducer } from '../../store'
+
 import { formataPreco } from '../../pages/Profile'
 import { close, remove } from '../../store/reducers/cart'
+
+import { Button } from '../../styles'
+import { Card, CardButton, Cards, CartContainer, Siderbar } from './styles'
 
 const Cart = () => {
   const dispatch = useDispatch()

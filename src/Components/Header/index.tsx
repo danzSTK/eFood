@@ -1,11 +1,14 @@
+import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+
+import { RootReducer } from '../../store'
+
+import { open } from '../../store/reducers/cart'
+
 import { Container, Hero } from './styles'
 
 import heroImage from '../../assets/images/fundo.png'
 import logo from '../../assets/images/logo.png'
-import { Link } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
-import { RootReducer } from '../../store'
-import { open } from '../../store/reducers/cart'
 
 export type Props = {
   tipo: 'profile' | 'home'
