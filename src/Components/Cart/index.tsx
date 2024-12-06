@@ -14,6 +14,7 @@ const Cart = () => {
 
   const valorTotal = () => {
     return items.reduce((acumulador, valorAtual) => {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       return (acumulador += valorAtual.preco!)
     }, 0)
   }
@@ -23,6 +24,7 @@ const Cart = () => {
   }
 
   const removeItemCart = (id: number) => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     dispatch(remove(id!))
   }
 

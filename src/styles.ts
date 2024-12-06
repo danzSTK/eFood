@@ -29,8 +29,12 @@ export const GlobalCss = createGlobalStyle`
   }
 
   body.modal-open {
-    overflow: hidden
+    overflow: hidden;
   }
+
+/*   body.cart-open {
+    overflow: hidden;
+  } */
 `
 
 export const Button = styled.button<Props>`
@@ -45,4 +49,5 @@ export const Button = styled.button<Props>`
   color: ${({ tipo }) => (tipo === 'home' ? cores.branco : cores.corPrincipal)};
   border: none;
   outline: none;
+  cursor: pointer;
 `

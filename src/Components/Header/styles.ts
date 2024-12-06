@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components'
 
 import { Props } from '.'
+import { cores } from '../../styles'
 
 export const Hero = styled.header<Props>`
   display: block;
@@ -43,6 +44,15 @@ export const Container = styled.div<Props>`
           align-items: center;
           height: 180px;
 
+          button {
+            flex: 1;
+            background-color: transparent;
+            border: none;
+            outline: none;
+            color: ${cores.corPrincipal};
+            cursor: pointer;
+          }
+
           h2 {
             flex: 1;
             font-size: 18px;
@@ -52,6 +62,10 @@ export const Container = styled.div<Props>`
             &:last-child {
               display: flex;
               justify-content: flex-end;
+            }
+
+            span {
+              margin-right: 4px;
             }
           }
 

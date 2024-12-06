@@ -103,6 +103,7 @@ const LojaProfile = () => {
               tipo="profile"
               type="button"
               onClick={() => {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 addCart(produtoDoCardapio!)
                 closeModal()
               }}

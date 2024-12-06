@@ -27,9 +27,11 @@ export const cartSlice = createSlice({
     },
     open: (state) => {
       state.isOpen = true
+      document.querySelector('body')!.style.overflow = 'hidden'
     },
     close: (state) => {
       state.isOpen = false
+      document.querySelector('body')!.style.overflow = 'auto'
     }
   }
 })
