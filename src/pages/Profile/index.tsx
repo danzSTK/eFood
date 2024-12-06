@@ -1,8 +1,12 @@
-import { useContext, useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
+
+//redux/ functions redux
+import { close } from '../../store/reducers/modal'
+import { useGetRestauranteQuery } from '../../store/reducers/api'
 
 // styles
 import * as S from './styles'
@@ -10,12 +14,7 @@ import Header from '../../Components/Header'
 import ProductList from '../../Components/Product-List'
 
 //tipos
-import { Cardapio, Restaurante } from '../Home'
-import { ModalContext } from '../../context/ModalContext'
-import { useGetRestauranteQuery } from '../../store/reducers/api'
-import { useDispatch, useSelector } from 'react-redux'
 import { RootReducer } from '../../store'
-import { close } from '../../store/reducers/modal'
 
 export const formataPreco = (preco = 0) => {
   return new Intl.NumberFormat('pt-BR', {

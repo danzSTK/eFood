@@ -5,10 +5,6 @@ type ModalState = {
   id: number | string | undefined
 }
 
-type ModalID = {
-  id: number | string
-}
-
 const initialState: ModalState = {
   isOpen: false,
   id: undefined
