@@ -1,15 +1,19 @@
+import React from 'react'
 import { Props as styleProps } from '../Card/styles' // Será o tipo de designer do card
 import { Cardapio, Restaurante } from '../../pages/Home' // recebendo a resposta da api atravez de props
 
 import { Products } from './styles'
 import Product from '../Card'
+import { useGetRestaurantesQuery } from '../../store/reducers/api'
 
 interface Props extends styleProps {
   restaurantes?: Restaurante[]
   cardapios?: Cardapio[]
 }
 
-const ProductList = ({ tipo, restaurantes, cardapios }: Props) => {
+const ProductList = ({ tipo, cardapios }: Props) => {
+  const { data: restaurantes, error, isLoading } = useGetRestaurantesQuery()
+
   function ProductsContent() {
     if (tipo === 'home') {
       if (!restaurantes) return <h2>Carregando...</h2>
