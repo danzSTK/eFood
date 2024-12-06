@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { cores } from '../../styles'
-import { Button } from '../../Components/Card/styles'
+import { Button } from '../../styles'
 
 export const Banner = styled.div`
   position: relative;

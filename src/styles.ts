@@ -1,4 +1,5 @@
-import { createGlobalStyle } from 'styled-components'
+import styled, { createGlobalStyle } from 'styled-components'
+import { Props } from './Components/Card/styles'
 
 export const cores = {
   branco: '#FFF8F2',
@@ -30,4 +31,18 @@ export const GlobalCss = createGlobalStyle`
   body.modal-open {
     overflow: hidden
   }
+`
+
+export const Button = styled.button<Props>`
+  display: ${({ tipo }) => (tipo === 'home' ? 'inline-block' : 'block')};
+  width: ${({ tipo }) => (tipo === 'home' ? 'auto' : '100%')};
+  padding: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 16px;
+  background-color: ${({ tipo }) =>
+    tipo === 'home' ? cores.corPrincipal : cores.corSecundaria};
+  color: ${({ tipo }) => (tipo === 'home' ? cores.branco : cores.corPrincipal)};
+  border: none;
+  outline: none;
 `

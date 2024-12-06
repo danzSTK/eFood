@@ -15,6 +15,8 @@ import ProductList from '../../Components/Product-List'
 
 //tipos
 import { RootReducer } from '../../store'
+import { add, open } from '../../store/reducers/cart'
+import { Cardapio } from '../Home'
 
 export const formataPreco = (preco = 0) => {
   return new Intl.NumberFormat('pt-BR', {
@@ -42,6 +44,11 @@ const LojaProfile = () => {
 
   const closeModal = () => {
     dispatch(close())
+  }
+
+  const addCart = (cardapio: Cardapio) => {
+    dispatch(add(cardapio))
+    dispatch(open())
   }
 
   if (!restaurante) {
@@ -92,7 +99,14 @@ const LojaProfile = () => {
             <h4>{produtoDoCardapio?.nome}</h4>
             <p>{produtoDoCardapio?.descricao}</p>
             <p>Serve {produtoDoCardapio?.porcao}</p>
-            <S.ModalButton tipo="profile">
+            <S.ModalButton
+              tipo="profile"
+              type="button"
+              onClick={() => {
+                addCart(produtoDoCardapio!)
+                closeModal()
+              }}
+            >
               Adicionar ao carrinho - {formataPreco(produtoDoCardapio?.preco)}{' '}
             </S.ModalButton>
           </S.ModalContent>

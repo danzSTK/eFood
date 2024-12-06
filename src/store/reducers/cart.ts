@@ -3,10 +3,12 @@ import { Cardapio } from '../../pages/Home'
 
 type CartState = {
   items: Cardapio[]
+  isOpen: boolean
 }
 
 const initialState: CartState = {
-  items: []
+  items: [],
+  isOpen: false
 }
 
 export const cartSlice = createSlice({
@@ -22,6 +24,15 @@ export const cartSlice = createSlice({
     },
     remove: (state, aciton: PayloadAction<number>) => {
       state.items = state.items.filter((item) => item.id !== aciton.payload)
+    },
+    open: (state) => {
+      state.isOpen = true
+    },
+    close: (state) => {
+      state.isOpen = false
     }
   }
 })
+
+export const { add, remove, open, close } = cartSlice.actions
+export default cartSlice.reducer

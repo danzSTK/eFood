@@ -6,7 +6,8 @@ import * as icon from '@fortawesome/free-solid-svg-icons'
 
 import { open } from '../../store/reducers/modal'
 
-import { Button, Card, Content, Description, Tag, Tags, Title } from './styles'
+import { Card, Content, Description, Tag, Tags, Title } from './styles'
+import { Button } from '../../styles'
 
 type Props = {
   tipo: 'home' | 'profile'
