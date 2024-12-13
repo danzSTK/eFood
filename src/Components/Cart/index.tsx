@@ -26,6 +26,8 @@ import {
 
 const Cart = () => {
   const [proceedToDelivery, setProceedToDelivery] = useState(false)
+  const [completePayment, setCompletPayment] = useState(false)
+  const [isCart, setIsCart] = useState(true)
   const dispatch = useDispatch()
   const { items, isOpen } = useSelector((state: RootReducer) => state.cart)
 
@@ -54,8 +56,7 @@ const Cart = () => {
       houseNumber: Yup.number().required('O campo é obrigatório')
     }),
     onSubmit: (values) => {
-      console.log(values)
-      console.log(form)
+      renderizaCarrinho('pagamento')
     }
   })
 
@@ -83,6 +84,29 @@ const Cart = () => {
     return hasError
   }
 
+  const renderizaCarrinho = (name: 'carrinho' | 'entrega' | 'pagamento') => {
+    switch (name) {
+      case 'carrinho':
+        setIsCart(true)
+        setCompletPayment(false)
+        setProceedToDelivery(false)
+        break
+      case 'entrega':
+        setIsCart(false)
+        setProceedToDelivery(true)
+        setCompletPayment(false)
+        break
+      case 'pagamento':
+        setIsCart(false)
+        setProceedToDelivery(false)
+        setCompletPayment(true)
+        break
+      default:
+        alert('erro no tipo de renderização')
+        break
+    }
+  }
+
   return (
     <CartContainer className={isOpen ? 'is-open' : ''}>
       <Siderbar>
@@ -93,7 +117,7 @@ const Cart = () => {
           </p>
         ) : (
           <>
-            {!proceedToDelivery && (
+            {isCart && (
               <>
                 <Cards>
                   {items.map((item) => (
@@ -118,7 +142,7 @@ const Cart = () => {
                 <Button
                   tipo="profile"
                   type="button"
-                  onClick={() => setProceedToDelivery(true)}
+                  onClick={() => renderizaCarrinho('entrega')}
                 >
                   Continuar com a entrega
                 </Button>
@@ -225,12 +249,22 @@ const Cart = () => {
                     <Button tipo="profile" type="submit">
                       Continuar com o pagamento
                     </Button>
-                    <Button type="button" tipo="profile">
+                    <Button
+                      type="button"
+                      tipo="profile"
+                      onClick={() => setProceedToDelivery(false)}
+                    >
                       Voltar para o carrinho
                     </Button>
                   </ButtonGroup>
                 </form>
               </div>
+            )}
+
+            {completePayment && (
+              <Button tipo="profile" onClick={() => console.log(form.values)}>
+                Teste
+              </Button>
             )}
           </>
         )}
