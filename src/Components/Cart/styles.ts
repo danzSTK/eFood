@@ -1,6 +1,10 @@
 import styled from 'styled-components'
 import { cores } from '../../styles'
 
+type Props = {
+  maxWidth?: string
+}
+
 export const CartContainer = styled.div`
   position: fixed;
   top: 0;
@@ -100,4 +104,54 @@ export const CardButton = styled.button`
   color: ${cores.corPrincipal};
   right: 8px;
   bottom: 8px;
+`
+
+export const Row = styled.div`
+  display: flex;
+  column-gap: 24px;
+  align-items: flex-start;
+`
+
+export const InputGruop = styled.div<Props>`
+  flex: auto;
+  color: ${cores.branco};
+  max-width: ${({ maxWidth }) => (maxWidth ? maxWidth : 'auto')};
+
+  label {
+    line-height: 16px;
+    font-size: 14px;
+    font-weight: bold;
+    display: block;
+    margin: 8px 0;
+  }
+
+  input {
+    flex: auto;
+    width: 100%;
+    height: 32px;
+    padding: 0 8px;
+    background-color: ${cores.corSecundaria};
+    border: none;
+    outline: none;
+    font-weight: bold;
+    font-size: 14px;
+
+    &.invalid {
+      border: 1px solid red;
+    }
+  }
+
+  & > p {
+    font-size: 14px;
+    line-height: 16px;
+    color: red;
+    margin-top: 4px;
+  }
+`
+
+export const ButtonGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 24px;
 `
