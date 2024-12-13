@@ -25,7 +25,7 @@ import {
 } from './styles'
 
 const Cart = () => {
-  const [proceedToDelivery, setProceedToDelivery] = useState(true)
+  const [proceedToDelivery, setProceedToDelivery] = useState(false)
   const dispatch = useDispatch()
   const { items, isOpen } = useSelector((state: RootReducer) => state.cart)
 
@@ -93,30 +93,42 @@ const Cart = () => {
           </p>
         ) : (
           <>
-            <Cards>
-              {items.map((item) => (
-                <Card key={item.id}>
-                  <img src={item.foto} alt={`${item.nome} image`} />
-                  <div>
-                    <h4>{item.nome}</h4>
-                    <p>{formataPreco(item.preco)}</p>
-                    <CardButton
-                      type="button"
-                      onClick={() => removeItemCart(item.id)}
-                    >
-                      <FontAwesomeIcon icon={faTrashCan} />
-                    </CardButton>
-                  </div>
-                </Card>
-              ))}
-            </Cards>
-            <p>
-              Valor Total <span>{formataPreco(valorTotal())}</span>
-            </p>
-            <Button tipo="profile">Continuar com a entrega</Button>
+            {!proceedToDelivery && (
+              <>
+                <Cards>
+                  {items.map((item) => (
+                    <Card key={item.id}>
+                      <img src={item.foto} alt={`${item.nome} image`} />
+                      <div>
+                        <h4>{item.nome}</h4>
+                        <p>{formataPreco(item.preco)}</p>
+                        <CardButton
+                          type="button"
+                          onClick={() => removeItemCart(item.id)}
+                        >
+                          <FontAwesomeIcon icon={faTrashCan} />
+                        </CardButton>
+                      </div>
+                    </Card>
+                  ))}
+                </Cards>
+                <p>
+                  Valor Total <span>{formataPreco(valorTotal())}</span>
+                </p>
+                <Button
+                  tipo="profile"
+                  type="button"
+                  onClick={() => setProceedToDelivery(true)}
+                >
+                  Continuar com a entrega
+                </Button>
+              </>
+            )}
 
+            {/* condição boolean para prosseguir com a compra */}
             {proceedToDelivery && (
               <div>
+                <h2>Entrega</h2>
                 <form onSubmit={form.handleSubmit}>
                   <Row>
                     <InputGruop>

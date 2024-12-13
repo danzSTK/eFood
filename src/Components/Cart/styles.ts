@@ -52,6 +52,14 @@ export const Siderbar = styled.aside`
     align-items: center;
     margin: 40px 0 16px 0;
   }
+
+  h2 {
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 19px;
+    color: ${cores.branco};
+    margin-bottom: 24px;
+  }
 `
 
 export const Cards = styled.div`
