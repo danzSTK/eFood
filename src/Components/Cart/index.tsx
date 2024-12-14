@@ -38,7 +38,12 @@ const Cart = () => {
       city: '',
       cep: '',
       houseNumber: '',
-      complement: ''
+      complement: '',
+      ownerCard: '',
+      cardNumber: '',
+      cardCode: '',
+      expiresMonth: '',
+      expiresYear: ''
     },
     validationSchema: Yup.object({
       receiver: Yup.string()
@@ -52,11 +57,32 @@ const Cart = () => {
         .transform((value) => (value.includes('_') ? '' : value))
         .matches(/^\d{5}-\d{3}$/, 'CEP inválido.')
         .required('O campo é obrigatório'),
-
-      houseNumber: Yup.number().required('O campo é obrigatório')
+      houseNumber: Yup.number().required('O campo é obrigatório'),
+      ownerCard: Yup.string()
+        .min(5, 'O nome precisa ter pelo menos 5 caracteres')
+        .required('O campo é obrigatório'),
+      cardNumber: Yup.string()
+        .transform((value) => value.replace(/\D/g, ''))
+        .min(16, 'O número do cartão está incorreto')
+        .max(16, 'Número do cartão invalido')
+        .required('O campo é obrigatório'),
+      cardCode: Yup.string()
+        .required('O campo é obrigatório')
+        .transform((value: string) => value.replace(/\D/g, ''))
+        .min(3, 'O CVV está inválido'),
+      expiresMonth: Yup.string()
+        .required('O campo é obrigatório')
+        .transform((value: string) => value.replace(/\D/g, ''))
+        .min(2, 'Essa data é invalida')
+        .max(2, 'Essa data é invalida'),
+      expiresYear: Yup.string()
+        .required('O campo é obrigatório')
+        .transform((value: string) => value.replace(/\D/g, ''))
+        .min(2, 'Essa data é invalida')
+        .max(2, 'Essa data é invalida')
     }),
     onSubmit: (values) => {
-      renderizaCarrinho('pagamento')
+      console.log(values)
     }
   })
 
@@ -106,6 +132,8 @@ const Cart = () => {
         break
     }
   }
+
+  console.log(form.errors)
 
   return (
     <CartContainer className={isOpen ? 'is-open' : ''}>
@@ -246,13 +274,17 @@ const Cart = () => {
                     </InputGruop>
                   </Row>
                   <ButtonGroup>
-                    <Button tipo="profile" type="submit">
+                    <Button
+                      tipo="profile"
+                      type="submit"
+                      /*  onClick={() => renderizaCarrinho('pagamento')} */
+                    >
                       Continuar com o pagamento
                     </Button>
                     <Button
                       type="button"
                       tipo="profile"
-                      onClick={() => setProceedToDelivery(false)}
+                      onClick={() => renderizaCarrinho('carrinho')}
                     >
                       Voltar para o carrinho
                     </Button>
@@ -262,9 +294,49 @@ const Cart = () => {
             )}
 
             {completePayment && (
-              <Button tipo="profile" onClick={() => console.log(form.values)}>
-                Teste
-              </Button>
+              <>
+                <h2>Pagamento - valor a pagar {formataPreco(valorTotal())}</h2>
+                <form onSubmit={form.handleSubmit}>
+                  <Row>
+                    <InputGruop>
+                      <label htmlFor="ownerCard">Nome no cartão</label>
+                      <input type="text" id="ownerCard" name="ownerCard" />
+                    </InputGruop>
+                  </Row>
+                  <Row>
+                    <InputGruop maxWidth="228px">
+                      <label htmlFor="cardNumber">Número no cartão</label>
+                      <input type="text" id="cardNumber" name="cardNumber" />
+                    </InputGruop>
+                    <InputGruop maxWidth="90px">
+                      <label htmlFor="cardCode">CVV</label>
+                      <input type="number" id="cardCode" name="cardCode" />
+                    </InputGruop>
+                  </Row>
+                  <Row>
+                    <InputGruop>
+                      <label htmlFor="expiresMonth">Mês de vencimento</label>
+                      <input
+                        type="text"
+                        id="expiresMonth"
+                        name="expiresMonth"
+                      />
+                    </InputGruop>
+                    <InputGruop>
+                      <label htmlFor="expiresYear">Ano de vencimento</label>
+                      <input type="text" id="expiresYear" name="expiresYear" />
+                    </InputGruop>
+                  </Row>
+                  <ButtonGroup>
+                    <Button tipo="profile" type="submit">
+                      Finalizar pagamento
+                    </Button>
+                    <Button tipo="profile" type="button">
+                      Voltar para a edição de endereço
+                    </Button>
+                  </ButtonGroup>
+                </form>
+              </>
             )}
           </>
         )}
