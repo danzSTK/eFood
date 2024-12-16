@@ -454,7 +454,11 @@ const Cart = () => {
                     <Button tipo="profile" type="submit">
                       Finalizar pagamento
                     </Button>
-                    <Button tipo="profile" type="button">
+                    <Button
+                      tipo="profile"
+                      type="button"
+                      onClick={() => renderizaCarrinho('entrega')}
+                    >
                       Voltar para a edição de endereço
                     </Button>
                   </S.ButtonGroup>
