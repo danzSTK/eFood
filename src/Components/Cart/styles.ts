@@ -149,6 +149,11 @@ export const InputGruop = styled.div<Props>`
     }
   }
 
+  input[type='number']::-webkit-inner-spin-button {
+    margin: 0;
+    -webkit-appearance: none;
+  }
+
   & > p {
     font-size: 14px;
     line-height: 16px;

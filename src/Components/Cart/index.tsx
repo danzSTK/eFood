@@ -58,31 +58,55 @@ const Cart = () => {
         .matches(/^\d{5}-\d{3}$/, 'CEP inválido.')
         .required('O campo é obrigatório'),
       houseNumber: Yup.number().required('O campo é obrigatório'),
-      ownerCard: Yup.string()
-        .min(5, 'O nome precisa ter pelo menos 5 caracteres')
-        .required('O campo é obrigatório'),
-      cardNumber: Yup.string()
-        .transform((value) => value.replace(/\D/g, ''))
-        .min(16, 'O número do cartão está incorreto')
-        .max(16, 'Número do cartão invalido')
-        .required('O campo é obrigatório'),
-      cardCode: Yup.string()
-        .required('O campo é obrigatório')
-        .transform((value: string) => value.replace(/\D/g, ''))
-        .min(3, 'O CVV está inválido'),
-      expiresMonth: Yup.string()
-        .required('O campo é obrigatório')
-        .transform((value: string) => value.replace(/\D/g, ''))
-        .min(2, 'Essa data é invalida')
-        .max(2, 'Essa data é invalida'),
-      expiresYear: Yup.string()
-        .required('O campo é obrigatório')
-        .transform((value: string) => value.replace(/\D/g, ''))
-        .min(2, 'Essa data é invalida')
-        .max(2, 'Essa data é invalida')
+      ownerCard: Yup.string().when((values, schema) =>
+        completePayment
+          ? schema
+              .min(5, 'O nome precisa ter pelo menos 5 caracteres')
+              .required('O campo é obrigatório')
+          : schema
+      ),
+      cardNumber: Yup.string().when((values, schema) =>
+        completePayment
+          ? schema
+              .transform((value) => value.replace(/\D/g, ''))
+              .min(16, 'O número do cartão está incorreto')
+              .max(16, 'Número do cartão invalido')
+              .required('O campo é obrigatório')
+          : schema
+      ),
+      cardCode: Yup.string().when((values, schema) =>
+        completePayment
+          ? schema
+              .required('O campo é obrigatório')
+              .transform((value: string) => value.replace(/\D/g, ''))
+              .min(3, 'O CVV está inválido')
+          : schema
+      ),
+      expiresMonth: Yup.string().when((values, schema) =>
+        completePayment
+          ? schema
+              .required('O campo é obrigatório')
+              .transform((value: string) => value.replace(/\D/g, ''))
+              .min(2, 'Essa data é invalida')
+              .max(2, 'Essa data é invalida')
+          : schema
+      ),
+      expiresYear: Yup.string().when((values, schema) =>
+        completePayment
+          ? schema
+              .required('O campo é obrigatório')
+              .transform((value: string) => value.replace(/\D/g, ''))
+              .min(2, 'Essa data é invalida')
+              .max(2, 'Essa data é invalida')
+          : schema
+      )
     }),
     onSubmit: (values) => {
-      console.log(values)
+      if (proceedToDelivery) {
+        renderizaCarrinho('pagamento')
+      } else if (completePayment) {
+        console.log(values)
+      }
     }
   })
 
@@ -102,7 +126,7 @@ const Cart = () => {
     dispatch(remove(id!))
   }
 
-  const invalidField = (fieldName: string) => {
+  const invalidField = (fieldName: string): boolean => {
     const isTouched = fieldName in form.touched
     const isInvalid = fieldName in form.errors
     const hasError = isInvalid && isTouched
@@ -134,6 +158,7 @@ const Cart = () => {
   }
 
   console.log(form.errors)
+  console.log(form.touched)
 
   return (
     <CartContainer className={isOpen ? 'is-open' : ''}>
@@ -300,31 +325,81 @@ const Cart = () => {
                   <Row>
                     <InputGruop>
                       <label htmlFor="ownerCard">Nome no cartão</label>
-                      <input type="text" id="ownerCard" name="ownerCard" />
+                      <input
+                        type="text"
+                        id="ownerCard"
+                        name="ownerCard"
+                        value={form.values.ownerCard}
+                        onChange={form.handleChange}
+                        onBlur={(e) => form.handleBlur(e)}
+                        key="ownerCard"
+                      />
+                      {invalidField('ownerCard') && (
+                        <p>{form.errors.ownerCard}</p>
+                      )}
                     </InputGruop>
                   </Row>
                   <Row>
                     <InputGruop maxWidth="228px">
                       <label htmlFor="cardNumber">Número no cartão</label>
-                      <input type="text" id="cardNumber" name="cardNumber" />
+                      <InputMask
+                        type="text"
+                        id="cardNumber"
+                        name="cardNumber"
+                        value={form.values.cardNumber}
+                        onChange={form.handleChange}
+                        onBlur={form.handleBlur}
+                        mask="9999 9999 9999 9999"
+                      />
+                      {invalidField('cardNumber') && (
+                        <p>{form.errors.cardNumber}</p>
+                      )}
                     </InputGruop>
                     <InputGruop maxWidth="90px">
                       <label htmlFor="cardCode">CVV</label>
-                      <input type="number" id="cardCode" name="cardCode" />
+                      <input
+                        type="number"
+                        id="cardCode"
+                        name="cardCode"
+                        value={form.values.cardCode}
+                        onChange={form.handleChange}
+                        onBlur={form.handleBlur}
+                      />
+                      {invalidField('cardCode') && (
+                        <p>{form.errors.cardCode}</p>
+                      )}
                     </InputGruop>
                   </Row>
                   <Row>
                     <InputGruop>
                       <label htmlFor="expiresMonth">Mês de vencimento</label>
-                      <input
+                      <InputMask
                         type="text"
                         id="expiresMonth"
                         name="expiresMonth"
+                        value={form.values.expiresMonth}
+                        onChange={form.handleChange}
+                        onBlur={form.handleBlur}
+                        mask="99"
                       />
+                      {invalidField('expiresMonth') && (
+                        <p>{form.errors.expiresMonth}</p>
+                      )}
                     </InputGruop>
                     <InputGruop>
                       <label htmlFor="expiresYear">Ano de vencimento</label>
-                      <input type="text" id="expiresYear" name="expiresYear" />
+                      <InputMask
+                        type="text"
+                        id="expiresYear"
+                        name="expiresYear"
+                        value={form.values.expiresYear}
+                        onChange={form.handleChange}
+                        onBlur={form.handleBlur}
+                        mask="99"
+                      />
+                      {invalidField('expiresYear') && (
+                        <p>{form.errors.expiresYear}</p>
+                      )}
                     </InputGruop>
                   </Row>
                   <ButtonGroup>
