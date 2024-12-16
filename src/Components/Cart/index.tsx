@@ -1,8 +1,9 @@
+import InputMask from 'react-input-mask'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import InputMask from 'react-input-mask'
 
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -11,32 +12,25 @@ import { RootReducer } from '../../store'
 
 import { formataPreco } from '../../pages/Profile'
 import { clear, close, remove } from '../../store/reducers/cart'
+import { useCheckoutMutation } from '../../store/reducers/api'
 
 import { Button } from '../../styles'
-import {
-  ButtonGroup,
-  Card,
-  CardButton,
-  Cards,
-  CartContainer,
-  InputGruop,
-  Row,
-  Siderbar
-} from './styles'
-import { useCheckoutMutation } from '../../store/reducers/api'
-import { useNavigate } from 'react-router-dom'
+
+import * as S from './styles'
 
 const Cart = () => {
+  const dispatch = useDispatch()
   const navigate = useNavigate()
+  const [finalizarCompra, { data, isError, isLoading, isSuccess }] =
+    useCheckoutMutation()
+
+  const { items, isOpen } = useSelector((state: RootReducer) => state.cart)
   const [proceedToDelivery, setProceedToDelivery] = useState(false)
   const [completePayment, setCompletPayment] = useState(false)
   const [paymentConfirmation, setPaymentConfirmation] = useState(false)
   const [isCart, setIsCart] = useState(true)
-  const dispatch = useDispatch()
-  const { items, isOpen } = useSelector((state: RootReducer) => state.cart)
-  const [finalizarCompra, { data, isError, isLoading, isSuccess }] =
-    useCheckoutMutation()
 
+  // Gerenciamento dos formularios/validações
   const form = useFormik({
     initialValues: {
       receiver: '',
@@ -141,22 +135,7 @@ const Cart = () => {
     }
   })
 
-  const valorTotal = () => {
-    return items.reduce((acumulador, valorAtual) => {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      return (acumulador += valorAtual.preco!)
-    }, 0)
-  }
-
-  const closeCart = () => {
-    dispatch(close())
-  }
-
-  const removeItemCart = (id: number) => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    dispatch(remove(id!))
-  }
-
+  // Validar mensagem de campo invalido
   const invalidField = (fieldName: string): boolean => {
     const isTouched = fieldName in form.touched
     const isInvalid = fieldName in form.errors
@@ -165,6 +144,26 @@ const Cart = () => {
     return hasError
   }
 
+  // soma dos valores dentro do carrinho
+  const valorTotal = () => {
+    return items.reduce((acumulador, valorAtual) => {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      return (acumulador += valorAtual.preco!)
+    }, 0)
+  }
+
+  // function criada em um slice redux do cart para fechar o carrinho
+  const closeCart = () => {
+    dispatch(close())
+  }
+
+  // function criada em um slice redux do cart para remover itens do carrinho
+  const removeItemCart = (id: number) => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    dispatch(remove(id!))
+  }
+
+  // function de renderização condicional do carrinho... função importante para o funcionamento do código
   const renderizaCarrinho = (
     name: 'carrinho' | 'entrega' | 'pagamento' | 'confirmacaoPagamento'
   ) => {
@@ -199,6 +198,7 @@ const Cart = () => {
     }
   }
 
+  // function pós venda, levar cliente de volta a home para comprar novamente
   const finalizePurchaseProcess = () => {
     dispatch(clear())
     dispatch(close())
@@ -208,8 +208,8 @@ const Cart = () => {
   }
 
   return (
-    <CartContainer className={isOpen ? 'is-open' : ''}>
-      <Siderbar>
+    <S.CartContainer className={isOpen ? 'is-open' : ''}>
+      <S.Siderbar>
         {items.length === 0 ? (
           <p>
             O carrinho está vázio, adicione produtos no carrinho para prosseguir
@@ -219,23 +219,23 @@ const Cart = () => {
           <>
             {isCart && (
               <>
-                <Cards>
+                <S.Cards>
                   {items.map((item) => (
-                    <Card key={item.id}>
+                    <S.Card key={item.id}>
                       <img src={item.foto} alt={`${item.nome} image`} />
                       <div>
                         <h4>{item.nome}</h4>
                         <p>{formataPreco(item.preco)}</p>
-                        <CardButton
+                        <S.CardButton
                           type="button"
                           onClick={() => removeItemCart(item.id)}
                         >
                           <FontAwesomeIcon icon={faTrashCan} />
-                        </CardButton>
+                        </S.CardButton>
                       </div>
-                    </Card>
+                    </S.Card>
                   ))}
-                </Cards>
+                </S.Cards>
                 <p>
                   Valor Total <span>{formataPreco(valorTotal())}</span>
                 </p>
@@ -254,8 +254,8 @@ const Cart = () => {
               <div>
                 <h2>Entrega</h2>
                 <form onSubmit={form.handleSubmit}>
-                  <Row>
-                    <InputGruop>
+                  <S.Row>
+                    <S.InputGruop>
                       <label htmlFor="receiver">Quem irá receber</label>
                       <input
                         type="text"
@@ -269,10 +269,10 @@ const Cart = () => {
                       {invalidField('receiver') && (
                         <p>{form.errors.receiver}</p>
                       )}
-                    </InputGruop>
-                  </Row>
-                  <Row>
-                    <InputGruop>
+                    </S.InputGruop>
+                  </S.Row>
+                  <S.Row>
+                    <S.InputGruop>
                       <label htmlFor="address">Endereço</label>
                       <input
                         type="text"
@@ -284,10 +284,10 @@ const Cart = () => {
                         className={invalidField('address') ? 'invalid' : ''}
                       />
                       {invalidField('address') && <p>{form.errors.address}</p>}
-                    </InputGruop>
-                  </Row>
-                  <Row>
-                    <InputGruop>
+                    </S.InputGruop>
+                  </S.Row>
+                  <S.Row>
+                    <S.InputGruop>
                       <label htmlFor="city">Cidade</label>
                       <input
                         type="text"
@@ -299,10 +299,10 @@ const Cart = () => {
                         className={invalidField('city') ? 'invalid' : ''}
                       />
                       {invalidField('city') && <p>{form.errors.city}</p>}
-                    </InputGruop>
-                  </Row>
-                  <Row>
-                    <InputGruop maxWidth="156px">
+                    </S.InputGruop>
+                  </S.Row>
+                  <S.Row>
+                    <S.InputGruop maxWidth="156px">
                       <label htmlFor="cep">CEP</label>
                       <InputMask
                         type="text"
@@ -315,8 +315,8 @@ const Cart = () => {
                         className={invalidField('cep') ? 'invalid' : ''}
                       />
                       {invalidField('cep') && <p>{form.errors.cep}</p>}
-                    </InputGruop>
-                    <InputGruop maxWidth="156px">
+                    </S.InputGruop>
+                    <S.InputGruop maxWidth="156px">
                       <label htmlFor="houseNumber">Número</label>
                       <input
                         type="text"
@@ -330,10 +330,10 @@ const Cart = () => {
                       {invalidField('houseNumber') && (
                         <p>{form.errors.houseNumber}</p>
                       )}
-                    </InputGruop>
-                  </Row>
-                  <Row>
-                    <InputGruop>
+                    </S.InputGruop>
+                  </S.Row>
+                  <S.Row>
+                    <S.InputGruop>
                       <label htmlFor="complement">Complemento (opcional)</label>
                       <input
                         type="text"
@@ -343,9 +343,9 @@ const Cart = () => {
                         onChange={form.handleChange}
                         onBlur={form.handleBlur}
                       />
-                    </InputGruop>
-                  </Row>
-                  <ButtonGroup>
+                    </S.InputGruop>
+                  </S.Row>
+                  <S.ButtonGroup>
                     <Button
                       tipo="profile"
                       type="submit"
@@ -360,17 +360,18 @@ const Cart = () => {
                     >
                       Voltar para o carrinho
                     </Button>
-                  </ButtonGroup>
+                  </S.ButtonGroup>
                 </form>
               </div>
             )}
 
+            {/* condição boolean para renderizar formulario de pagamento */}
             {completePayment && (
               <>
                 <h2>Pagamento - valor a pagar {formataPreco(valorTotal())}</h2>
                 <form onSubmit={form.handleSubmit}>
-                  <Row>
-                    <InputGruop>
+                  <S.Row>
+                    <S.InputGruop>
                       <label htmlFor="ownerCard">Nome no cartão</label>
                       <input
                         type="text"
@@ -384,10 +385,10 @@ const Cart = () => {
                       {invalidField('ownerCard') && (
                         <p>{form.errors.ownerCard}</p>
                       )}
-                    </InputGruop>
-                  </Row>
-                  <Row>
-                    <InputGruop maxWidth="228px">
+                    </S.InputGruop>
+                  </S.Row>
+                  <S.Row>
+                    <S.InputGruop maxWidth="228px">
                       <label htmlFor="cardNumber">Número no cartão</label>
                       <InputMask
                         type="text"
@@ -401,8 +402,8 @@ const Cart = () => {
                       {invalidField('cardNumber') && (
                         <p>{form.errors.cardNumber}</p>
                       )}
-                    </InputGruop>
-                    <InputGruop maxWidth="90px">
+                    </S.InputGruop>
+                    <S.InputGruop maxWidth="90px">
                       <label htmlFor="cardCode">CVV</label>
                       <input
                         type="number"
@@ -415,10 +416,10 @@ const Cart = () => {
                       {invalidField('cardCode') && (
                         <p>{form.errors.cardCode}</p>
                       )}
-                    </InputGruop>
-                  </Row>
-                  <Row>
-                    <InputGruop>
+                    </S.InputGruop>
+                  </S.Row>
+                  <S.Row>
+                    <S.InputGruop>
                       <label htmlFor="expiresMonth">Mês de vencimento</label>
                       <InputMask
                         type="text"
@@ -432,8 +433,8 @@ const Cart = () => {
                       {invalidField('expiresMonth') && (
                         <p>{form.errors.expiresMonth}</p>
                       )}
-                    </InputGruop>
-                    <InputGruop>
+                    </S.InputGruop>
+                    <S.InputGruop>
                       <label htmlFor="expiresYear">Ano de vencimento</label>
                       <InputMask
                         type="text"
@@ -447,20 +448,21 @@ const Cart = () => {
                       {invalidField('expiresYear') && (
                         <p>{form.errors.expiresYear}</p>
                       )}
-                    </InputGruop>
-                  </Row>
-                  <ButtonGroup>
+                    </S.InputGruop>
+                  </S.Row>
+                  <S.ButtonGroup>
                     <Button tipo="profile" type="submit">
                       Finalizar pagamento
                     </Button>
                     <Button tipo="profile" type="button">
                       Voltar para a edição de endereço
                     </Button>
-                  </ButtonGroup>
+                  </S.ButtonGroup>
                 </form>
               </>
             )}
 
+            {/* condição boolean para renderizar mensagem de confirmação do pedido */}
             {paymentConfirmation && (
               <>
                 {isLoading && <h2>Carregando....</h2>}
@@ -493,7 +495,7 @@ const Cart = () => {
                       experiência gastronômica. Bom apetite!
                     </p>
 
-                    <ButtonGroup>
+                    <S.ButtonGroup>
                       <Button
                         type="button"
                         tipo="profile"
@@ -501,7 +503,7 @@ const Cart = () => {
                       >
                         Concluir
                       </Button>
-                    </ButtonGroup>
+                    </S.ButtonGroup>
                   </div>
                 )}
                 {isError && <h2>Opps! Não foi possível realizar seu pedido</h2>}
@@ -509,12 +511,12 @@ const Cart = () => {
             )}
           </>
         )}
-      </Siderbar>
+      </S.Siderbar>
       <div
         className="overlay"
         onClick={() => (paymentConfirmation ? '' : closeCart())}
       ></div>
-    </CartContainer>
+    </S.CartContainer>
   )
 }
 
