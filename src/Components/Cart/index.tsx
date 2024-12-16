@@ -23,6 +23,7 @@ import {
   Row,
   Siderbar
 } from './styles'
+import { useCheckoutMutation } from '../../store/reducers/api'
 
 const Cart = () => {
   const [proceedToDelivery, setProceedToDelivery] = useState(false)
@@ -30,6 +31,8 @@ const Cart = () => {
   const [isCart, setIsCart] = useState(true)
   const dispatch = useDispatch()
   const { items, isOpen } = useSelector((state: RootReducer) => state.cart)
+  const [finalizarCompra, { data, isError, isLoading, isSuccess }] =
+    useCheckoutMutation()
 
   const form = useFormik({
     initialValues: {
@@ -80,6 +83,7 @@ const Cart = () => {
               .required('O campo é obrigatório')
               .transform((value: string) => value.replace(/\D/g, ''))
               .min(3, 'O CVV está inválido')
+              .max(3, 'O CVV está inválido')
           : schema
       ),
       expiresMonth: Yup.string().when((values, schema) =>
@@ -96,8 +100,8 @@ const Cart = () => {
           ? schema
               .required('O campo é obrigatório')
               .transform((value: string) => value.replace(/\D/g, ''))
-              .min(2, 'Essa data é invalida')
-              .max(2, 'Essa data é invalida')
+              .min(4, 'Essa data é invalida')
+              .max(4, 'Essa data é invalida')
           : schema
       )
     }),
@@ -105,7 +109,30 @@ const Cart = () => {
       if (proceedToDelivery) {
         renderizaCarrinho('pagamento')
       } else if (completePayment) {
-        console.log(values)
+        finalizarCompra({
+          products: items.map((item) => ({ id: item.id, price: item.preco })),
+          delivery: {
+            receiver: values.receiver,
+            address: {
+              description: values.address,
+              city: values.city,
+              zipCode: values.cep,
+              number: Number(values.houseNumber),
+              complement: values.complement
+            }
+          },
+          payment: {
+            card: {
+              name: values.ownerCard,
+              number: values.cardNumber,
+              code: Number(values.cardCode),
+              expires: {
+                month: Number(values.expiresMonth),
+                year: Number(values.expiresYear)
+              }
+            }
+          }
+        })
       }
     }
   })
@@ -395,7 +422,7 @@ const Cart = () => {
                         value={form.values.expiresYear}
                         onChange={form.handleChange}
                         onBlur={form.handleBlur}
-                        mask="99"
+                        mask="9999"
                       />
                       {invalidField('expiresYear') && (
                         <p>{form.errors.expiresYear}</p>
