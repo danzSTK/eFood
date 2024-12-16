@@ -60,6 +60,12 @@ export const Siderbar = styled.aside`
     color: ${cores.branco};
     margin-bottom: 24px;
   }
+
+  .text {
+    font-size: 14px;
+    line-height: 22px;
+    color: ${cores.branco};
+  }
 `
 
 export const Cards = styled.div`

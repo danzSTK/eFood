@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { RootReducer } from '../../store'
 
 import { formataPreco } from '../../pages/Profile'
-import { close, remove } from '../../store/reducers/cart'
+import { clear, close, remove } from '../../store/reducers/cart'
 
 import { Button } from '../../styles'
 import {
@@ -24,10 +24,13 @@ import {
   Siderbar
 } from './styles'
 import { useCheckoutMutation } from '../../store/reducers/api'
+import { useNavigate } from 'react-router-dom'
 
 const Cart = () => {
+  const navigate = useNavigate()
   const [proceedToDelivery, setProceedToDelivery] = useState(false)
   const [completePayment, setCompletPayment] = useState(false)
+  const [paymentConfirmation, setPaymentConfirmation] = useState(false)
   const [isCart, setIsCart] = useState(true)
   const dispatch = useDispatch()
   const { items, isOpen } = useSelector((state: RootReducer) => state.cart)
@@ -133,6 +136,7 @@ const Cart = () => {
             }
           }
         })
+        renderizaCarrinho('confirmacaoPagamento')
       }
     }
   })
@@ -161,22 +165,33 @@ const Cart = () => {
     return hasError
   }
 
-  const renderizaCarrinho = (name: 'carrinho' | 'entrega' | 'pagamento') => {
+  const renderizaCarrinho = (
+    name: 'carrinho' | 'entrega' | 'pagamento' | 'confirmacaoPagamento'
+  ) => {
     switch (name) {
       case 'carrinho':
         setIsCart(true)
         setCompletPayment(false)
         setProceedToDelivery(false)
+        setPaymentConfirmation(false)
         break
       case 'entrega':
         setIsCart(false)
         setProceedToDelivery(true)
         setCompletPayment(false)
+        setPaymentConfirmation(false)
         break
       case 'pagamento':
         setIsCart(false)
         setProceedToDelivery(false)
         setCompletPayment(true)
+        setPaymentConfirmation(false)
+        break
+      case 'confirmacaoPagamento':
+        setIsCart(false)
+        setProceedToDelivery(false)
+        setCompletPayment(false)
+        setPaymentConfirmation(true)
         break
       default:
         alert('erro no tipo de renderização')
@@ -184,8 +199,13 @@ const Cart = () => {
     }
   }
 
-  console.log(form.errors)
-  console.log(form.touched)
+  const finalizePurchaseProcess = () => {
+    dispatch(clear())
+    dispatch(close())
+    renderizaCarrinho('carrinho')
+    form.resetForm()
+    navigate('/')
+  }
 
   return (
     <CartContainer className={isOpen ? 'is-open' : ''}>
@@ -440,10 +460,60 @@ const Cart = () => {
                 </form>
               </>
             )}
+
+            {paymentConfirmation && (
+              <>
+                {isLoading && <h2>Carregando....</h2>}
+
+                {isSuccess && (
+                  <div>
+                    <h2>
+                      Pedido realizado - <span>{data.orderId}</span>
+                    </h2>
+                    <p className="text">
+                      Estamos felizes em informar que seu pedido já está em
+                      processo de preparação e, em breve, será entregue no
+                      endereço fornecido.
+                    </p>
+                    <br />
+
+                    <p className="text">
+                      Gostaríamos de ressaltar que nossos entregadores não estão
+                      autorizados a realizar cobranças extras.
+                    </p>
+                    <br />
+                    <p className="text">
+                      Lembre-se da importância de higienizar as mãos após o
+                      recebimento do pedido, garantindo assim sua segurança e
+                      bem-estar durante a refeição.
+                    </p>
+                    <br />
+                    <p className="text">
+                      Esperamos que desfrute de uma deliciosa e agradável
+                      experiência gastronômica. Bom apetite!
+                    </p>
+
+                    <ButtonGroup>
+                      <Button
+                        type="button"
+                        tipo="profile"
+                        onClick={finalizePurchaseProcess}
+                      >
+                        Concluir
+                      </Button>
+                    </ButtonGroup>
+                  </div>
+                )}
+                {isError && <h2>Opps! Não foi possível realizar seu pedido</h2>}
+              </>
+            )}
           </>
         )}
       </Siderbar>
-      <div className="overlay" onClick={closeCart}></div>
+      <div
+        className="overlay"
+        onClick={() => (paymentConfirmation ? '' : closeCart())}
+      ></div>
     </CartContainer>
   )
 }

@@ -32,9 +32,12 @@ export const cartSlice = createSlice({
     close: (state) => {
       state.isOpen = false
       document.querySelector('body')!.style.overflow = 'auto'
+    },
+    clear: (state) => {
+      state.items = []
     }
   }
 })
 
-export const { add, remove, open, close } = cartSlice.actions
+export const { add, remove, open, close, clear } = cartSlice.actions
 export default cartSlice.reducer
